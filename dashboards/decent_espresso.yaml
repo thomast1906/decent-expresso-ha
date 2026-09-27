@@ -1,0 +1,204 @@
+# Decent Espresso dashboard.
+# Settings > Dashboards > Add dashboard > "New dashboard from scratch",
+# open it, ⋮ > Edit dashboard > ⋮ > Raw configuration editor, and paste this file.
+# Entity IDs assume the device is named "Decent Espresso" (the default).
+title: Decent Espresso
+views:
+  - title: Espresso
+    path: espresso
+    icon: mdi:coffee
+    type: sections
+    max_columns: 3
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Machine
+            icon: mdi:coffee-maker
+            badges:
+              - type: entity
+                entity: binary_sensor.decent_espresso_live_updates
+                show_state: false
+              - type: entity
+                entity: binary_sensor.decent_espresso_water_low
+          - type: tile
+            entity: switch.decent_espresso_power
+            name: Power
+            icon: mdi:power
+            vertical: false
+            features_position: bottom
+            grid_options:
+              columns: 12
+            features:
+              - type: toggle
+          - type: tile
+            entity: sensor.decent_espresso_state
+            name: State
+            icon: mdi:state-machine
+          - type: tile
+            entity: sensor.decent_espresso_substate
+            name: Substate
+            icon: mdi:progress-clock
+          - type: tile
+            entity: sensor.decent_espresso_water_level
+            name: Water tank
+            icon: mdi:water
+          - type: tile
+            entity: sensor.decent_espresso_profile
+            name: Profile
+            icon: mdi:chart-bell-curve
+      - type: grid
+        cards:
+          - type: heading
+            heading: Temperatures
+            icon: mdi:thermometer
+          - type: gauge
+            entity: sensor.decent_espresso_group_temperature
+            name: Group
+            min: 20
+            max: 100
+            needle: true
+            severity:
+              green: 88
+              yellow: 60
+              red: 0
+          - type: gauge
+            entity: sensor.decent_espresso_steam_temperature
+            name: Steam
+            min: 20
+            max: 170
+            needle: true
+            severity:
+              green: 130
+              yellow: 80
+              red: 0
+          - type: tile
+            entity: sensor.decent_espresso_mix_temperature
+            name: Mix
+          - type: tile
+            entity: sensor.decent_espresso_target_group_temperature
+            name: Target group
+      - type: grid
+        cards:
+          - type: heading
+            heading: Actions
+            icon: mdi:gesture-tap-button
+          - type: button
+            entity: button.decent_espresso_flush
+            name: Flush
+            icon: mdi:water-sync
+            tap_action:
+              action: perform-action
+              perform_action: button.press
+              target:
+                entity_id: button.decent_espresso_flush
+            grid_options:
+              columns: 4
+          - type: button
+            entity: button.decent_espresso_hot_water
+            name: Hot water
+            icon: mdi:kettle
+            tap_action:
+              action: perform-action
+              perform_action: button.press
+              target:
+                entity_id: button.decent_espresso_hot_water
+            grid_options:
+              columns: 4
+          - type: button
+            entity: button.decent_espresso_steam
+            name: Steam
+            icon: mdi:weather-windy
+            tap_action:
+              action: perform-action
+              perform_action: button.press
+              target:
+                entity_id: button.decent_espresso_steam
+            grid_options:
+              columns: 4
+          - type: button
+            entity: button.decent_espresso_stop
+            name: Stop
+            icon: mdi:stop-circle
+            tap_action:
+              action: perform-action
+              perform_action: button.press
+              target:
+                entity_id: button.decent_espresso_stop
+            grid_options:
+              columns: 6
+          - type: button
+            entity: button.decent_espresso_tare_scale
+            name: Tare
+            icon: mdi:scale-balance
+            tap_action:
+              action: perform-action
+              perform_action: button.press
+              target:
+                entity_id: button.decent_espresso_tare_scale
+            grid_options:
+              columns: 6
+      - type: grid
+        column_span: 2
+        cards:
+          - type: heading
+            heading: Live extraction
+            icon: mdi:chart-line
+          - type: history-graph
+            hours_to_show: 1
+            grid_options:
+              columns: full
+            entities:
+              - entity: sensor.decent_espresso_pressure
+                name: Pressure
+              - entity: sensor.decent_espresso_flow
+                name: Flow
+              - entity: sensor.decent_espresso_scale_weight
+                name: Weight
+          - type: history-graph
+            hours_to_show: 6
+            grid_options:
+              columns: full
+            entities:
+              - entity: sensor.decent_espresso_group_temperature
+                name: Group
+              - entity: sensor.decent_espresso_steam_temperature
+                name: Steam
+      - type: grid
+        cards:
+          - type: heading
+            heading: Last shot
+            icon: mdi:history
+          - type: tile
+            entity: sensor.decent_espresso_last_shot
+            name: Pulled
+            grid_options:
+              columns: 12
+          - type: tile
+            entity: sensor.decent_espresso_target_dose
+            name: Dose
+          - type: tile
+            entity: sensor.decent_espresso_target_yield
+            name: Yield
+          - type: markdown
+            content: >-
+              {% set s = 'sensor.decent_espresso_last_shot' %}
+              **Profile:** {{ state_attr(s, 'profile') or '—' }}  
+              **Dose:** {{ state_attr(s, 'actual_dose') or state_attr(s, 'target_dose') or '—' }} g  
+              **Yield:** {{ state_attr(s, 'actual_yield') or '—' }} g  
+              **Stopped by:** {{ state_attr(s, 'stop_reason') or '—' }}
+      - type: grid
+        cards:
+          - type: heading
+            heading: Settings
+            icon: mdi:cog
+          - type: entities
+            entities:
+              - number.decent_espresso_steam_flow
+              - number.decent_espresso_hot_water_flow
+              - number.decent_espresso_flush_flow
+              - number.decent_espresso_flush_temperature
+              - number.decent_espresso_flush_duration
+              - number.decent_espresso_fan_threshold
+              - number.decent_espresso_refill_warning_level
+              - switch.decent_espresso_usb_charger

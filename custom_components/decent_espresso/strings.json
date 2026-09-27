@@ -1,0 +1,175 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Decaid",
+        "description": "Enter the address of the device running the Decaid app for your Decent espresso machine.",
+        "data": {
+          "host": "Host",
+          "port": "Port"
+        },
+        "data_description": {
+          "host": "IP address or hostname of the Decaid app, e.g. 192.168.0.195",
+          "port": "Decaid API port (default 8080)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not reach Decaid. Check the host/port and that the app is running."
+    },
+    "abort": {
+      "already_configured": "This machine is already configured."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "state": {
+        "name": "State",
+        "state": {
+          "booting": "Booting",
+          "busy": "Busy",
+          "idle": "Idle",
+          "sleeping": "Sleeping",
+          "heating": "Heating",
+          "preheating": "Preheating",
+          "espresso": "Espresso",
+          "hotWater": "Hot water",
+          "flush": "Flush",
+          "steam": "Steam",
+          "steamRinse": "Steam rinse",
+          "skipStep": "Skip step",
+          "cleaning": "Cleaning",
+          "descaling": "Descaling",
+          "calibration": "Calibration",
+          "selfTest": "Self test",
+          "airPurge": "Air purge",
+          "needsWater": "Needs water",
+          "error": "Error",
+          "fwUpgrade": "Firmware upgrade"
+        }
+      },
+      "substate": {
+        "name": "Substate"
+      },
+      "group_temperature": {
+        "name": "Group temperature"
+      },
+      "mix_temperature": {
+        "name": "Mix temperature"
+      },
+      "steam_temperature": {
+        "name": "Steam temperature"
+      },
+      "target_group_temperature": {
+        "name": "Target group temperature"
+      },
+      "target_mix_temperature": {
+        "name": "Target mix temperature"
+      },
+      "pressure": {
+        "name": "Pressure"
+      },
+      "target_pressure": {
+        "name": "Target pressure"
+      },
+      "flow": {
+        "name": "Flow"
+      },
+      "target_flow": {
+        "name": "Target flow"
+      },
+      "profile_frame": {
+        "name": "Profile frame"
+      },
+      "water_level": {
+        "name": "Water level"
+      },
+      "scale_weight": {
+        "name": "Scale weight"
+      },
+      "scale_flow": {
+        "name": "Scale flow"
+      },
+      "scale_battery": {
+        "name": "Scale battery"
+      },
+      "profile": {
+        "name": "Profile"
+      },
+      "target_dose": {
+        "name": "Target dose"
+      },
+      "target_yield": {
+        "name": "Target yield"
+      },
+      "last_shot": {
+        "name": "Last shot"
+      },
+      "firmware": {
+        "name": "Firmware"
+      }
+    },
+    "binary_sensor": {
+      "water_low": {
+        "name": "Water low"
+      },
+      "scale_connected": {
+        "name": "Scale connected"
+      },
+      "live_updates": {
+        "name": "Live updates"
+      }
+    },
+    "switch": {
+      "power": {
+        "name": "Power"
+      },
+      "usb_charger": {
+        "name": "USB charger"
+      }
+    },
+    "button": {
+      "stop": {
+        "name": "Stop"
+      },
+      "flush": {
+        "name": "Flush"
+      },
+      "hot_water": {
+        "name": "Hot water"
+      },
+      "steam": {
+        "name": "Steam"
+      },
+      "espresso": {
+        "name": "Start espresso"
+      },
+      "tare_scale": {
+        "name": "Tare scale"
+      }
+    },
+    "number": {
+      "steam_flow": {
+        "name": "Steam flow"
+      },
+      "hot_water_flow": {
+        "name": "Hot water flow"
+      },
+      "flush_flow": {
+        "name": "Flush flow"
+      },
+      "flush_temperature": {
+        "name": "Flush temperature"
+      },
+      "flush_timeout": {
+        "name": "Flush duration"
+      },
+      "fan_threshold": {
+        "name": "Fan threshold"
+      },
+      "refill_level": {
+        "name": "Refill warning level"
+      }
+    }
+  }
+}
