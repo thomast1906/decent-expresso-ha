@@ -1,0 +1,35 @@
+# Decent Espresso - notify when machine is ready (plain automation, no blueprint needed).
+#
+# Settings > Automations & scenes > Create automation > Create new automation,
+# then ⋮ (top right) > Edit in YAML, paste this file, change the notify action and save.
+#
+# Change notify.mobile_app_your_phone to your phone's notify action
+# (Developer tools > Actions, type "notify.mobile_app").
+alias: Decent Espresso - notify when machine is ready
+description: >-
+  Notifies once per wake-up when the group head is within 2 °C of its target temperature.
+mode: single
+
+triggers:
+  - trigger: template
+    value_template: >-
+      {% set t = states('sensor.decent_espresso_group_temperature') | float(none) %}
+      {% set target = states('sensor.decent_espresso_target_group_temperature') | float(none) %}
+      {{ is_state('switch.decent_espresso_power', 'on') and t is not none and target is not none
+         and t >= target - 2 }}
+
+conditions:
+  # Only once per wake-up: skip if already notified since the power switch last turned on.
+  - condition: template
+    value_template: >-
+      {% set last = this.attributes.last_triggered %}
+      {% set woke = states.switch.decent_espresso_power.last_changed if states.switch.decent_espresso_power is not none else none %}
+      {{ last is none or woke is none or as_datetime(last) < woke }}
+
+actions:
+  - action: notify.mobile_app_your_phone
+    data:
+      title: Espresso machine ready
+      message: >-
+        Group head is at {{ states('sensor.decent_espresso_group_temperature') | float(0) | round(1) }}°C
+        (target {{ states('sensor.decent_espresso_target_group_temperature') | float(0) | round(1) }}°C).

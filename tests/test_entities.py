@@ -76,3 +76,35 @@ async def test_camel_case_state_maps_to_snake_case(hass, setup_integration):
     state = hass.states.get("sensor.decent_espresso_state")
     assert state.state == "hot_water"
     assert "hot_water" in state.attributes["options"]
+
+
+async def test_profile_select(hass, setup_integration, mock_api):
+    state = hass.states.get("select.decent_espresso_profile")
+    assert state.state == "Default"
+    assert state.attributes["options"] == ["Adaptive v3", "Default"]  # hidden excluded, sorted
+
+    await hass.services.async_call(
+        "select", "select_option",
+        {"entity_id": "select.decent_espresso_profile", "option": "Adaptive v3"}, blocking=True,
+    )
+    puts = [c for c in mock_api.mock_calls if c[0] == "PUT" and str(c[1]).endswith("/workflow")]
+    assert puts[-1][2] == {"profile": {"title": "Adaptive v3", "author": "Decent", "steps": []}}
+    assert hass.states.get("select.decent_espresso_profile").state == "Adaptive v3"
+    assert hass.states.get("sensor.decent_espresso_profile").state == "Adaptive v3"
+
+
+async def test_profiles_etag_reuses_cached_list(hass, aioclient_mock):
+    from homeassistant.helpers.aiohttp_client import async_get_clientsession
+
+    from custom_components.decent_espresso.api import DecentClient
+
+    from .conftest import HOST, PROFILES
+
+    client = DecentClient(async_get_clientsession(hass), HOST, 8080)
+    aioclient_mock.get(f"{BASE}/profiles", json=PROFILES, headers={"ETag": '"abc"'})
+    assert len(await client.get_profiles()) == 3
+
+    aioclient_mock.clear_requests()
+    aioclient_mock.get(f"{BASE}/profiles", status=304)
+    assert len(await client.get_profiles()) == 3
+    assert aioclient_mock.mock_calls[-1][3] == {"If-None-Match": '"abc"'}

@@ -34,6 +34,8 @@ class DecentClient:
         self._session = session
         self.host = host
         self.port = port
+        self._profiles_etag: str | None = None
+        self._profiles: list[dict[str, Any]] = []
 
     @property
     def base_url(self) -> str:
@@ -81,6 +83,34 @@ class DecentClient:
 
     async def get_workflow(self) -> dict[str, Any]:
         return await self._request("GET", "workflow")
+
+    async def set_workflow(self, patch: dict[str, Any]) -> dict[str, Any] | None:
+        """Deep-merge ``patch`` into the current workflow; Decaid uploads it to the machine."""
+        return await self._request("PUT", "workflow", patch)
+
+    async def get_profiles(self) -> list[dict[str, Any]]:
+        """List profiles, using the ETag so unchanged lists (~180 KB) come back as 304."""
+        url = f"{self.base_url}/api/v1/profiles"
+        headers = {"If-None-Match": self._profiles_etag} if self._profiles_etag else None
+        try:
+            async with self._session.get(url, headers=headers, timeout=REQUEST_TIMEOUT) as resp:
+                if resp.status == 304:
+                    return self._profiles
+                text = await resp.text()
+                if resp.status >= 400:
+                    raise DecentApiError(
+                        f"GET profiles failed ({resp.status}): {_error_detail(text)}"
+                    )
+                etag = resp.headers.get("ETag")
+        except (aiohttp.ClientError, asyncio.TimeoutError) as err:
+            raise DecentConnectionError(f"Error talking to Decaid at {url}: {err}") from err
+        try:
+            profiles = json.loads(text)
+        except ValueError as err:
+            raise DecentApiError("GET profiles returned invalid JSON") from err
+        self._profiles = profiles if isinstance(profiles, list) else []
+        self._profiles_etag = etag
+        return self._profiles
 
     async def get_latest_shot(self) -> dict[str, Any] | None:
         try:

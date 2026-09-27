@@ -42,6 +42,7 @@ IP address of the device running Decaid (for example `192.168.0.195`) and port `
 | Button | Stop (back to idle), Flush, Hot water, Steam, Tare scale, Start espresso *(disabled by default)* |
 | Sensor | State, substate, group/mix/steam temperature, target group/mix temperature, pressure, flow, water level, scale weight/flow/battery, profile, target dose/yield, last shot (with profile, dose, yield, stop reason attributes), firmware |
 | Binary sensor | Water low (hidden on machines with a refill kit), scale connected, live updates |
+| Select | **Profile**: lists Decaid's visible profiles; choosing one applies it via `PUT /api/v1/workflow` |
 | Number | Steam flow, hot water flow, flush flow/temperature/duration, fan threshold, refill warning level |
 
 Power in an automation:
@@ -55,7 +56,7 @@ target:
 ## Dashboard
 
 [`dashboards/decent_espresso.yaml`](dashboards/decent_espresso.yaml) is a ready-made
-sections dashboard with a power toggle, machine state, a water tank gauge, temperature gauges, action
+sections dashboard with a power toggle, a profile dropdown, machine state, a water tank gauge, temperature gauges, action
 buttons, live pressure/flow/weight gauges, the last shot and settings. It only shows
 live values, so it doesn't need any history saved in Home Assistant.
 
@@ -63,11 +64,23 @@ live values, so it doesn't need any history saved in Home Assistant.
 2. Open it, then **⋮ → Edit dashboard → ⋮ → Raw configuration editor**.
 3. Paste the file contents and save.
 
-## Blueprints
+## Notifications
+
+There are two ways to get a "machine ready" notification when the group head reaches its target
+temperature (within 2 °C) after the machine wakes. Both notify once per wake-up. Pick one.
+
+### Option 1: plain automation (paste YAML)
+
+1. **Settings → Automations & scenes → Create automation → Create new automation**.
+2. **⋮** (top right) → **Edit in YAML**, and paste
+   [`automations/machine_ready.yaml`](automations/machine_ready.yaml).
+3. Change `notify.mobile_app_your_phone` to your phone (find it under **Developer tools → Actions**,
+   type `notify.mobile_app`), then save.
+
+### Option 2: blueprint
 
 [`blueprints/automation/decent_espresso/machine_ready.yaml`](blueprints/automation/decent_espresso/machine_ready.yaml)
-sends a notification when the group head reaches its target temperature (within a margin, 2 °C by default)
-after the machine wakes. It notifies once per wake-up.
+does the same, with the margin, notify action and message as form fields instead of YAML.
 
 [![Open your Home Assistant instance and show the blueprint import dialog with this blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fthomast1906%2Fdecent-expresso-ha%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fdecent_espresso%2Fmachine_ready.yaml)
 
@@ -77,8 +90,8 @@ Or import it with **Settings → Automations & scenes → Blueprints → Import 
 https://github.com/thomast1906/decent-expresso-ha/blob/main/blueprints/automation/decent_espresso/machine_ready.yaml
 ```
 
-Then create an automation from it and set **Notify action** to your phone, e.g.
-`notify.mobile_app_your_phone`. For manual installs, copy the file to
+Importing only adds the blueprint. Then open it under **Blueprints → Create automation**,
+set **Notify action** to your phone (e.g. `notify.mobile_app_your_phone`) and save. For manual installs, copy the file to
 `config/blueprints/automation/decent_espresso/` and reload automations.
 
 ## History (optional)

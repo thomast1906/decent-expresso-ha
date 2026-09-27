@@ -141,6 +141,16 @@ in Decaid and be exact, not throttled.
 - **Water section on the dashboard**: tank gauge (max 60 mm is a guess; adjust to your full
   reading), water-low sensor and refill warning level.
 
+- **Plain automation** (`automations/machine_ready.yaml`): the same logic as the blueprint
+  with entity IDs hard-coded, for pasting into the automation YAML editor. The trigger fires
+  when the "ready" condition changes from false to true, so if the machine is already hot and
+  awake when the automation is saved, it waits for the next wake. Toggle power off and on to test.
+- **Profile select** (`select.decent_espresso_profile`): options are the titles of visible
+  profiles from `GET /api/v1/profiles`. Choosing one sends `PUT /api/v1/workflow` with
+  `{"profile": ...}`; Decaid deep-merges it and uploads it to the machine. The list is ~180 KB
+  (73 profiles here), so it's polled with `If-None-Match` and Decaid usually replies `304`.
+  Shows unknown when the active profile isn't in the library.
+
 ## Other ideas not built yet
 
 - **Automations** (plain HA YAML, no code changes needed):
@@ -148,8 +158,6 @@ in Decaid and be exact, not throttled.
   - Sleep when everyone leaves home, or after N minutes idle.
   - Notify when `binary_sensor.decent_espresso_water_low` turns on.
   - Notify "shot finished" when `sensor.decent_espresso_last_shot` changes.
-- **Profile select entity**: choose a profile from `GET /api/v1/profiles` and upload it with
-  `POST /api/v1/machine/profile`.
 - **Shot-settings numbers**: steam temperature/duration, hot water volume/temperature, group
   temperature via `POST /api/v1/machine/shotSettings`.
 - **Shot counter / daily stats** from `GET /api/v1/shots` (the source of truth stays in Decaid).

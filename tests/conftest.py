@@ -24,6 +24,11 @@ SETTINGS = {"fan": 50, "usb": True, "flushTemp": 90.0, "flushTimeout": 6.0, "flu
             "hotWaterFlow": 8.0, "steamFlow": 1.8, "tankTemp": 0, "steamPurgeMode": 0}
 WORKFLOW = {"profile": {"title": "Default", "author": "Decent"},
             "context": {"targetDoseWeight": 18.0, "targetYield": 36.0}}
+PROFILES = [
+    {"id": "profile:a", "visibility": "visible", "profile": {"title": "Default", "author": "Decent", "steps": []}},
+    {"id": "profile:b", "visibility": "visible", "profile": {"title": "Adaptive v3", "author": "Decent", "steps": []}},
+    {"id": "profile:c", "visibility": "hidden", "profile": {"title": "Hidden one", "steps": []}},
+]
 SHOT = {"id": "ec06", "createdAt": "2026-09-27T09:12:12.354751Z",
         "workflow": {"profile": {"title": "Default"}, "context": {"targetDoseWeight": 18.0}},
         "annotations": {"actualDoseWeight": 18.0}, "stopReason": "machineEnded"}
@@ -52,6 +57,8 @@ def mock_api(aioclient_mock):
     aioclient_mock.get(f"{BASE}/machine/settings", json=SETTINGS)
     aioclient_mock.get(f"{BASE}/workflow", json=WORKFLOW)
     aioclient_mock.get(f"{BASE}/shots/latest", json=SHOT)
+    aioclient_mock.get(f"{BASE}/profiles", json=PROFILES, headers={"ETag": '"abc"'})
+    aioclient_mock.put(f"{BASE}/workflow", json={**WORKFLOW, "profile": PROFILES[1]["profile"]})
     aioclient_mock.put(f"{BASE}/machine/state/idle")
     aioclient_mock.put(f"{BASE}/machine/state/sleeping")
     aioclient_mock.post(f"{BASE}/machine/settings", status=202)

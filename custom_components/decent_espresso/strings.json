@@ -170,6 +170,11 @@
       "refill_level": {
         "name": "Refill warning level"
       }
+    },
+    "select": {
+      "profile_select": {
+        "name": "Profile"
+      }
     }
   }
 }

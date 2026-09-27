@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Awaitable
+from typing import Any
 
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.device_registry import DeviceInfo
@@ -34,7 +35,10 @@ class DecentEntity(CoordinatorEntity[DecentCoordinator]):
         )
 
     async def _call(self, awaitable: Awaitable) -> None:
+        await self._call_result(awaitable)
+
+    async def _call_result(self, awaitable: Awaitable[Any]) -> Any:
         try:
-            await awaitable
+            return await awaitable
         except DecentError as err:
             raise HomeAssistantError(str(err)) from err

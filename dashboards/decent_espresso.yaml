@@ -41,9 +41,15 @@ views:
             name: Substate
             icon: mdi:progress-clock
           - type: tile
-            entity: sensor.decent_espresso_profile
+            entity: select.decent_espresso_profile
             name: Profile
             icon: mdi:chart-bell-curve
+            vertical: false
+            features_position: bottom
+            grid_options:
+              columns: 12
+            features:
+              - type: select-options
       - type: grid
         cards:
           - type: heading

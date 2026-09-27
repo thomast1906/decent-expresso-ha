@@ -37,6 +37,7 @@ class DecentData:
     settings: dict[str, Any] = field(default_factory=dict)
     workflow: dict[str, Any] = field(default_factory=dict)
     latest_shot: dict[str, Any] | None = None
+    profiles: list[dict[str, Any]] = field(default_factory=list)
     water: dict[str, Any] = field(default_factory=dict)
     scale: dict[str, Any] = field(default_factory=dict)
     scale_connected: bool = False
@@ -84,6 +85,11 @@ class DecentCoordinator(DataUpdateCoordinator[DecentData]):
         except DecentError as err:
             raise UpdateFailed(str(err)) from err
         data = self._live
+        try:
+            data.profiles = await self.client.get_profiles()
+        except DecentError as err:
+            # Not critical: keep the last known list so the rest of the device stays available.
+            _LOGGER.debug("Could not refresh profiles: %s", err)
         data.info = info or {}
         if not data.live_connected:
             data.snapshot = snapshot or {}
@@ -151,6 +157,11 @@ class DecentCoordinator(DataUpdateCoordinator[DecentData]):
         self._live.scale_connected = True
         self._live.scale = msg
         self._push()
+
+    @callback
+    def set_optimistic_workflow(self, workflow: dict[str, Any]) -> None:
+        self._live.workflow = workflow
+        self._push(force=True)
 
     @callback
     def set_optimistic_state(self, state: str) -> None:
