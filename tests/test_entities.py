@@ -67,3 +67,12 @@ async def test_setup_retries_when_unreachable(hass, aioclient_mock, config_entry
     config_entry.add_to_hass(hass)
     await hass.config_entries.async_setup(config_entry.entry_id)
     assert config_entry.state.name == "SETUP_RETRY"
+
+
+async def test_camel_case_state_maps_to_snake_case(hass, setup_integration):
+    coordinator = setup_integration.runtime_data
+    coordinator._on_snapshot({"state": {"state": "hotWater", "substate": "pouring"}})
+    await hass.async_block_till_done()
+    state = hass.states.get("sensor.decent_espresso_state")
+    assert state.state == "hot_water"
+    assert "hot_water" in state.attributes["options"]

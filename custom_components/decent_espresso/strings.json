@@ -33,19 +33,19 @@
           "heating": "Heating",
           "preheating": "Preheating",
           "espresso": "Espresso",
-          "hotWater": "Hot water",
+          "hot_water": "Hot water",
           "flush": "Flush",
           "steam": "Steam",
-          "steamRinse": "Steam rinse",
-          "skipStep": "Skip step",
+          "steam_rinse": "Steam rinse",
+          "skip_step": "Skip step",
           "cleaning": "Cleaning",
           "descaling": "Descaling",
           "calibration": "Calibration",
-          "selfTest": "Self test",
-          "airPurge": "Air purge",
-          "needsWater": "Needs water",
+          "self_test": "Self test",
+          "air_purge": "Air purge",
+          "needs_water": "Needs water",
           "error": "Error",
-          "fwUpgrade": "Firmware upgrade"
+          "fw_upgrade": "Firmware upgrade"
         }
       },
       "substate": {

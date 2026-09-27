@@ -20,7 +20,7 @@ The integration keeps nothing on disk. It only holds the latest values in memory
 - **REST polling every 30 s**: `machine/info`, `machine/state`, `machine/settings`, `workflow`,
   `shots/latest`.
 - **Throttling** (`coordinator.py`, `const.py`): entity updates are capped at
-  - 1 per second while working (`espresso`, `steam`, `hotWater`, `flush`, `steamRinse`, `cleaning`, `descaling`)
+  - 1 per second while working (Decaid states `espresso`, `steam`, `hotWater`, `flush`, `steamRinse`, `cleaning`, `descaling`)
   - 1 per 10 seconds otherwise (sleeping, idle, heating)
   - immediately on a machine state change or a WebSocket/scale connect or disconnect.
 - Temperatures are rounded to 0.1 °C and pressure/flow to 0.01, so tiny changes don't count as new states.
@@ -47,6 +47,12 @@ automations, notifications.
 
 **Lost without history:** entity history and logbook views, history graphs, long-term
 statistics (for example daily temperature trends).
+
+## State values
+
+Decaid reports states in camelCase (`hotWater`, `steamRinse`, ...). Home Assistant requires
+enum state keys to be lowercase snake_case, so the `State` sensor exposes `hot_water`,
+`steam_rinse`, `needs_water`, etc. Use those values in automations and templates.
 
 ## Options for later
 

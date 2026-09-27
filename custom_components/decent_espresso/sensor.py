@@ -26,7 +26,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.util import dt as dt_util
 
-from .const import MACHINE_STATES
+from .const import MACHINE_STATES, STATE_OPTIONS, state_key
 from .coordinator import DecentConfigEntry, DecentData
 from .entity import DecentEntity
 
@@ -96,8 +96,8 @@ SENSORS: tuple[DecentSensorDescription, ...] = (
         key="state",
         translation_key="state",
         device_class=SensorDeviceClass.ENUM,
-        options=MACHINE_STATES,
-        value_fn=lambda d: d.machine_state if d.machine_state in MACHINE_STATES else None,
+        options=STATE_OPTIONS,
+        value_fn=lambda d: state_key(d.machine_state) if d.machine_state in MACHINE_STATES else None,
     ),
     DecentSensorDescription(
         key="substate",

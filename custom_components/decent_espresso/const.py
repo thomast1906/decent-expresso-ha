@@ -43,3 +43,12 @@ MACHINE_STATES = [
     "error",
     "fwUpgrade",
 ]
+
+
+def state_key(state: str) -> str:
+    """Convert a Decaid camelCase state (e.g. ``hotWater``) to an HA state key (``hot_water``)."""
+    return "".join(f"_{c.lower()}" if c.isupper() else c for c in state)
+
+
+# Sensor options use HA-style snake_case keys; Decaid's API uses camelCase.
+STATE_OPTIONS = [state_key(s) for s in MACHINE_STATES]
