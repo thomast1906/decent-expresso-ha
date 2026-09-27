@@ -48,12 +48,46 @@ target:
 ## Dashboard
 
 [`dashboards/decent_espresso.yaml`](dashboards/decent_espresso.yaml) is a ready-made
-sections dashboard with a power toggle, machine state, temperature gauges, action
-buttons, live pressure/flow/weight graphs, the last shot and settings.
+sections dashboard with a power toggle, machine state, a water tank gauge, temperature gauges, action
+buttons, live pressure/flow/weight gauges, the last shot and settings. It only shows
+live values, so it doesn't need any history saved in Home Assistant.
 
 1. **Settings → Dashboards → Add dashboard → New dashboard from scratch**.
 2. Open it, then **⋮ → Edit dashboard → ⋮ → Raw configuration editor**.
 3. Paste the file contents and save.
+
+## Blueprints
+
+[`blueprints/automation/decent_espresso/machine_ready.yaml`](blueprints/automation/decent_espresso/machine_ready.yaml)
+sends a notification when the group head reaches its target temperature (within a margin, 2 °C by default)
+after the machine wakes. It notifies once per wake-up.
+
+Import it with **Settings → Automations & scenes → Blueprints → Import blueprint** using:
+
+```
+https://github.com/thomast1906/decent-expresso-ha/blob/main/blueprints/automation/decent_espresso/machine_ready.yaml
+```
+
+Then create an automation from it and set **Notify action** to your phone, e.g.
+`notify.mobile_app_your_phone`. For manual installs, copy the file to
+`config/blueprints/automation/decent_espresso/` and reload automations.
+
+## History (optional)
+
+Nothing needs to be stored in Home Assistant: live values come from Decaid, and your
+shot history and profiles stay in Decaid. To keep these entities out of the Home
+Assistant database entirely, add this to `configuration.yaml` and restart:
+
+```yaml
+recorder:
+  exclude:
+    entity_globs:
+      - "*.decent_espresso_*"
+```
+
+Entity history and logbook views will then be empty; the dashboard, controls and
+automations keep working. See [`docs/design-notes.md`](docs/design-notes.md) for other
+history options and ideas for later.
 
 ## Development
 

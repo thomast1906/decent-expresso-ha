@@ -1,0 +1,104 @@
+blueprint:
+  name: Decent Espresso - notify when machine is ready
+  description: >-
+    Sends a notification once the group head is within a set margin of its target
+    temperature after the machine wakes. Notifies once per wake-up, so temperature
+    dips while pulling shots won't cause repeat notifications.
+  domain: automation
+  source_url: https://github.com/thomast1906/decent-expresso-ha/blob/main/blueprints/automation/decent_espresso/machine_ready.yaml
+  input:
+    power_switch:
+      name: Power switch
+      selector:
+        entity:
+          filter:
+            - integration: decent_espresso
+              domain: switch
+      default: switch.decent_espresso_power
+    group_temperature:
+      name: Group temperature sensor
+      selector:
+        entity:
+          filter:
+            - integration: decent_espresso
+              domain: sensor
+              device_class: temperature
+      default: sensor.decent_espresso_group_temperature
+    target_temperature:
+      name: Target group temperature sensor
+      selector:
+        entity:
+          filter:
+            - integration: decent_espresso
+              domain: sensor
+              device_class: temperature
+      default: sensor.decent_espresso_target_group_temperature
+    margin:
+      name: Margin below target
+      description: Counts as ready once the group is within this many degrees of the target.
+      default: 2
+      selector:
+        number:
+          min: 0
+          max: 10
+          step: 0.5
+          unit_of_measurement: "°C"
+    notify_action:
+      name: Notify action
+      description: >-
+        Notify action to call, e.g. notify.mobile_app_your_phone (see
+        Developer tools > Actions and search for "notify.").
+      default: notify.notify
+      selector:
+        text:
+    title:
+      name: Title
+      default: Espresso machine ready
+      selector:
+        text:
+    message:
+      name: Message
+      description: "Can use {{ temperature }} and {{ target }}."
+      default: "Group head is at {{ temperature }}°C (target {{ target }}°C)."
+      selector:
+        text:
+          multiline: true
+
+mode: single
+
+trigger_variables:
+  power_switch: !input power_switch
+  group_temperature: !input group_temperature
+  target_temperature: !input target_temperature
+  margin: !input margin
+
+variables:
+  power_switch: !input power_switch
+  group_temperature: !input group_temperature
+  target_temperature: !input target_temperature
+  notify_action: !input notify_action
+
+triggers:
+  - trigger: template
+    value_template: >-
+      {% set t = states(group_temperature) | float(none) %}
+      {% set target = states(target_temperature) | float(none) %}
+      {{ is_state(power_switch, 'on') and t is not none and target is not none
+         and t >= target - (margin | float(0)) }}
+
+conditions:
+  # Only once per wake-up: skip if already notified since the switch last turned on.
+  - condition: template
+    value_template: >-
+      {% set last = this.attributes.last_triggered %}
+      {% set woke = states[power_switch].last_changed if states[power_switch] is not none else none %}
+      {{ last is none or woke is none or as_datetime(last) < woke }}
+
+actions:
+  - variables:
+      temperature: "{{ states(group_temperature) | float(0) | round(1) }}"
+      target: "{{ states(target_temperature) | float(0) | round(1) }}"
+  - action: "{{ notify_action }}"
+    data:
+      title: !input title
+      message: !input message

@@ -2,6 +2,7 @@
 # Settings > Dashboards > Add dashboard > "New dashboard from scratch",
 # open it, ⋮ > Edit dashboard > ⋮ > Raw configuration editor, and paste this file.
 # Entity IDs assume the device is named "Decent Espresso" (the default).
+# Uses live values only (no history-graph cards), so it works with the recorder excluded.
 title: Decent Espresso
 views:
   - title: Espresso
@@ -40,13 +41,35 @@ views:
             name: Substate
             icon: mdi:progress-clock
           - type: tile
-            entity: sensor.decent_espresso_water_level
-            name: Water tank
-            icon: mdi:water
-          - type: tile
             entity: sensor.decent_espresso_profile
             name: Profile
             icon: mdi:chart-bell-curve
+      - type: grid
+        cards:
+          - type: heading
+            heading: Water
+            icon: mdi:water
+          - type: gauge
+            entity: sensor.decent_espresso_water_level
+            name: Tank level
+            min: 0
+            # Adjust to your tank's reading when full (mm).
+            max: 60
+            needle: true
+            severity:
+              green: 15
+              yellow: 8
+              red: 0
+            grid_options:
+              columns: 12
+          - type: tile
+            entity: binary_sensor.decent_espresso_water_low
+            name: Water low
+            icon: mdi:water-alert
+          - type: tile
+            entity: number.decent_espresso_refill_warning_level
+            name: Warn below
+            icon: mdi:water-minus
       - type: grid
         cards:
           - type: heading
@@ -139,31 +162,30 @@ views:
             grid_options:
               columns: 6
       - type: grid
-        column_span: 2
         cards:
           - type: heading
             heading: Live extraction
-            icon: mdi:chart-line
-          - type: history-graph
-            hours_to_show: 1
-            grid_options:
-              columns: full
-            entities:
-              - entity: sensor.decent_espresso_pressure
-                name: Pressure
-              - entity: sensor.decent_espresso_flow
-                name: Flow
-              - entity: sensor.decent_espresso_scale_weight
-                name: Weight
-          - type: history-graph
-            hours_to_show: 6
-            grid_options:
-              columns: full
-            entities:
-              - entity: sensor.decent_espresso_group_temperature
-                name: Group
-              - entity: sensor.decent_espresso_steam_temperature
-                name: Steam
+            icon: mdi:gauge
+          - type: gauge
+            entity: sensor.decent_espresso_pressure
+            name: Pressure
+            min: 0
+            max: 12
+            needle: true
+          - type: gauge
+            entity: sensor.decent_espresso_flow
+            name: Flow
+            min: 0
+            max: 8
+            needle: true
+          - type: tile
+            entity: sensor.decent_espresso_scale_weight
+            name: Weight
+            icon: mdi:scale
+          - type: tile
+            entity: sensor.decent_espresso_scale_flow
+            name: Scale flow
+            icon: mdi:water-outline
       - type: grid
         cards:
           - type: heading
