@@ -74,8 +74,10 @@ temperature (within 2 °C) after the machine wakes. Both notify once per wake-up
 1. **Settings → Automations & scenes → Create automation → Create new automation**.
 2. **⋮** (top right) → **Edit in YAML**, and paste
    [`automations/machine_ready.yaml`](automations/machine_ready.yaml).
-3. Change `notify.mobile_app_your_phone` to your phone (find it under **Developer tools → Actions**,
-   type `notify.mobile_app`), then save.
+3. **Change the notify action.** Replace `notify.mobile_app_your_phone` with your phone's action.
+   Install the Home Assistant Companion app, then find the name under **Developer tools → Actions**
+   by typing `notify.mobile_app` (e.g. `notify.mobile_app_johns_iphone`).
+4. Save, then **⋮ → Run actions** to send a test notification.
 
 ### Option 2: blueprint
 

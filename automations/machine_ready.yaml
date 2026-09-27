@@ -1,10 +1,18 @@
 # Decent Espresso - notify when machine is ready (plain automation, no blueprint needed).
 #
-# Settings > Automations & scenes > Create automation > Create new automation,
-# then ⋮ (top right) > Edit in YAML, paste this file, change the notify action and save.
+# Notifies once per wake-up when the group head is within 2 °C of its target temperature.
 #
-# Change notify.mobile_app_your_phone to your phone's notify action
-# (Developer tools > Actions, type "notify.mobile_app").
+# Setup:
+#   1. Settings > Automations & scenes > Create automation > Create new automation.
+#   2. ⋮ (top right) > Edit in YAML, and paste this whole file.
+#   3. CHANGE THE NOTIFY ACTION (see "actions" below) to your phone:
+#        - Install the Home Assistant Companion app on your phone and log in.
+#        - Developer tools > Actions, type "notify.mobile_app" and copy the name shown,
+#          e.g. notify.mobile_app_johns_iphone.
+#   4. Save, then ⋮ > Run actions to send a test notification.
+#
+# The trigger fires when the machine *becomes* ready. If it is already awake and hot
+# when you save, toggle Power off and on to test.
 alias: Decent Espresso - notify when machine is ready
 description: >-
   Notifies once per wake-up when the group head is within 2 °C of its target temperature.
@@ -27,9 +35,10 @@ conditions:
       {{ last is none or woke is none or as_datetime(last) < woke }}
 
 actions:
+  # CHANGE ME: replace with your phone's notify action (see step 3 above).
   - action: notify.mobile_app_your_phone
     data:
-      title: Espresso machine ready
       message: >-
-        Group head is at {{ states('sensor.decent_espresso_group_temperature') | float(0) | round(1) }}°C
+        Decent Espresso ready, group head at
+        {{ states('sensor.decent_espresso_group_temperature') | float(0) | round(1) }}°C
         (target {{ states('sensor.decent_espresso_target_group_temperature') | float(0) | round(1) }}°C).

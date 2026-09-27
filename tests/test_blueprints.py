@@ -64,8 +64,9 @@ async def test_notifies_once_per_wake(hass, plain):
 
     await _temp(hass, 89.6)
     assert len(calls) == 1
-    assert calls[0].data["title"] == "Espresso machine ready"
-    assert " ".join(calls[0].data["message"].split()) == "Group head is at 89.6°C (target 91.5°C)."
+    assert " ".join(calls[0].data["message"].split()) == (
+        "Decent Espresso ready, group head at 89.6°C (target 91.5°C)."
+    )
 
     # Dip during a shot then recover: no repeat.
     await _temp(hass, 80)

@@ -44,22 +44,18 @@ blueprint:
           step: 0.5
           unit_of_measurement: "°C"
     notify_action:
-      name: Notify action
+      name: Notify action (change this)
       description: >-
-        Notify action to call, e.g. notify.mobile_app_your_phone (see
-        Developer tools > Actions and search for "notify.").
-      default: notify.notify
-      selector:
-        text:
-    title:
-      name: Title
-      default: Espresso machine ready
+        Your phone's notify action. Install the Home Assistant Companion app, then find
+        the name under Developer tools > Actions by typing "notify.mobile_app",
+        e.g. notify.mobile_app_johns_iphone.
+      default: notify.mobile_app_your_phone
       selector:
         text:
     message:
       name: Message
       description: "Can use {{ temperature }} and {{ target }}."
-      default: "Group head is at {{ temperature }}°C (target {{ target }}°C)."
+      default: "Decent Espresso ready, group head at {{ temperature }}°C (target {{ target }}°C)."
       selector:
         text:
           multiline: true
@@ -100,5 +96,4 @@ actions:
       target: "{{ states(target_temperature) | float(0) | round(1) }}"
   - action: "{{ notify_action }}"
     data:
-      title: !input title
       message: !input message
