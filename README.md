@@ -14,8 +14,13 @@ A Home Assistant custom integration for Decent espresso machines. It talks to th
 
 ### HACS (custom repository)
 
-1. HACS → ⋮ → **Custom repositories** → add `https://github.com/thomast1906/decent-expresso-ha`, category **Integration**.
-2. Install **Decent Espresso** and restart Home Assistant.
+[![Open your Home Assistant instance and open this repository inside HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=thomast1906&repository=decent-expresso-ha&category=integration)
+
+The button opens HACS on your Home Assistant with this repository ready to add as a
+custom repository. Download **Decent Espresso**, then restart Home Assistant.
+
+Or add it by hand: HACS → **⋮** (top right) → **Custom repositories** → add
+`https://github.com/thomast1906/decent-expresso-ha`, type **Integration**.
 
 ### Manual
 
@@ -24,7 +29,9 @@ folder and restart.
 
 ## Setup
 
-**Settings → Devices & services → Add integration → Decent Espresso**, then enter the
+[![Open your Home Assistant instance and start setting up Decent Espresso.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=decent_espresso)
+
+Or go to **Settings → Devices & services → Add integration → Decent Espresso**. Enter the
 IP address of the device running Decaid (for example `192.168.0.195`) and port `8080`.
 
 ## Entities
@@ -62,7 +69,9 @@ live values, so it doesn't need any history saved in Home Assistant.
 sends a notification when the group head reaches its target temperature (within a margin, 2 °C by default)
 after the machine wakes. It notifies once per wake-up.
 
-Import it with **Settings → Automations & scenes → Blueprints → Import blueprint** using:
+[![Open your Home Assistant instance and show the blueprint import dialog with this blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fthomast1906%2Fdecent-expresso-ha%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Fdecent_espresso%2Fmachine_ready.yaml)
+
+Or import it with **Settings → Automations & scenes → Blueprints → Import blueprint** using:
 
 ```
 https://github.com/thomast1906/decent-expresso-ha/blob/main/blueprints/automation/decent_espresso/machine_ready.yaml
